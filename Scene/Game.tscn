@@ -1,0 +1,58 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://GameObject/Player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Script/Game.gd" type="Script" id=2]
+[ext_resource path="res://GameObject/ShapeSpawner.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Script/CameraShake.gd" type="Script" id=4]
+[ext_resource path="res://Scene/Menu/GameHUD.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Sound/backgroun.wav" type="AudioStream" id=6]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 360, 32 )
+
+[node name="Game" type="Node2D"]
+script = ExtResource( 2 )
+speed = 8
+max_speed = 512
+
+[node name="BackGround" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 6 )
+autoplay = true
+
+[node name="CameraShake" type="Camera2D" parent="."]
+position = Vector2( 368, 640 )
+current = true
+script = ExtResource( 4 )
+decay = 1.0
+max_offset = Vector2( 50, 50 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_left = -360.0
+margin_top = -120.0
+margin_right = 1128.0
+margin_bottom = 1424.0
+color = Color( 0.788235, 0.788235, 0.788235, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Player" parent="." instance=ExtResource( 1 )]
+position = Vector2( 360, 1100 )
+scale = Vector2( 0.5, 0.5 )
+
+[node name="Spawner" parent="." instance=ExtResource( 3 )]
+positions = [ Vector2( 120, -120 ), Vector2( 360, -120 ), Vector2( 600, -120 ) ]
+
+[node name="GameHUD" parent="." instance=ExtResource( 5 )]
+
+[node name="LoseArea" type="Area2D" parent="."]
+position = Vector2( 360, 1456 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LoseArea"]
+shape = SubResource( 1 )
+[connection signal="finished" from="BackGround" to="." method="_on_BackGround_finished"]
+[connection signal="hit" from="Player" to="." method="_on_Player_hit"]
+[connection signal="body_entered" from="LoseArea" to="." method="_on_LoseArea_body_entered"]
